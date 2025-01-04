@@ -1,19 +1,30 @@
 import { useState } from "react"
 import axios from 'axios'
+import { useDispatch } from "react-redux"
+import { addUser } from "../utils/userSlice"
+import { useNavigate } from "react-router-dom"
+import { BASEURL } from "../utils/constant"
 const Login=()=>{
+   const dispatch=useDispatch()
     const [emailId,setEmailId]=useState('trump@gmail.com')
     const [password,setPassword]=useState('Trump@123.')
+    const [error,setError]=useState('')
+    const navigate=useNavigate()
 const handleLogin=async()=>{
     try{
-      const res=await axios.post("http://localhost:3000/login",{
+      const res=await   axios.post(BASEURL + "/login",{
             emailId,
             password
         },{withCredentials:true}) 
+        dispatch(addUser(res.data))
+        navigate('/feed')
     }catch(err){
         console.log(err)
+        setError(err.response.data)
     }
    
 }
+console.log("errr",error)
     return(
        <div className="flex justify-center my-10">
    <div className="card bg-base-300 w-96 shadow-xl">
@@ -39,6 +50,7 @@ const handleLogin=async()=>{
     <div className="card-actions justify-center m-2">
         <button className="btn" onClick={handleLogin}>Login</button>
     </div>
+    <div className='text-red-500'>{error}</div>
   </div>
 </div>
        </div> 

@@ -5,7 +5,9 @@ const userAuth=async(req,res,next)=>{
         const {token}=req.cookies
         console.log("tokennnnnnn middleware",token)
         if(!token){
-            throw new Error("Token is not valid")
+          
+            throw new Error("User not found")
+            
         }
      const decodedObj=await jwt.verify(token,"Dev@Tinder")
      const {_id}=decodedObj

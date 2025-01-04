@@ -8,14 +8,14 @@ const userModal=require('./models/user')
 const userRouter=require('./routes/user')
 const cookieparser=require('cookie-parser')
 const cors=require('cors')
+app.use(cors({
+  origin: 'http://localhost:5173', // Replace with your frontend's origin
+  credentials: true // This is crucial for credentials
+}));
+
 app.use(express.json());
 app.use(cookieparser())
-app.use(cors(
-  {
-    origin:"http://localhost:5173",
-    credentials:true
-  }
-))
+
 console.log('App started');
 app.use('/', authRouter);
 app.use('/', profileRouter);
