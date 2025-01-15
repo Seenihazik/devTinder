@@ -6,10 +6,8 @@ const NavBar = () => {
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate=useNavigate()
-  console.log("user from redux", user);
   const handleLogout=async()=>{
     try{
-      console.log("Inn log")
       await axios.post('http://localhost:3000/logout',{},{withCredentials:true})
        dispatch(removeUser())
        navigate('/')
@@ -54,10 +52,13 @@ const NavBar = () => {
                   </Link>
                 </li>
                 <li>
-                  <a>Settings</a>
+                  <Link to='/connections'>Connections</Link>
                 </li>
                 <li>
-                  <a onClick={handleLogout}>Logzzzout</a>
+                  <Link to='/requests'>Requests</Link>
+                </li>
+                <li>
+                  <a onClick={handleLogout}>Logout</a>
                 </li>
               </ul>
             </div>

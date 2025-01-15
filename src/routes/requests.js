@@ -22,8 +22,8 @@ requestRoute.get('/sendConnectionRequest',userAuth,(req,res)=>{
         const toUserId=(req.params.toUserId)
         const status=req.params.status
         console.log("re")
-        console.log("..fromUserId",fromUserId,"...toUserId",toUserId,"....status",status)
-        const allowedRequest=['ignored',"intrested"]
+        console.log("..fromUserId",fromUserId,"...toUserId",toUserId,'type',typeof toUserId,"....status",status)
+        const allowedRequest=['ignored',"accepted","intrested"]
         if(!allowedRequest.includes(status)){
           return res.status(400).json({
             message:"Invalid Status type"+status
@@ -40,14 +40,24 @@ requestRoute.get('/sendConnectionRequest',userAuth,(req,res)=>{
           $or:[
             {fromUserId,toUserId},
             {fromUserId:toUserId,toUserId:fromUserId}
-          ]
+          ],
+          status:{ $eq:'intrested'}
         })
         console.log("...existingConnecctionRequest/////",existingConnecctionRequest)
-        if(existingConnecctionRequest){
+        if(existingConnecctionRequest?.status=='accepted'||existingConnecctionRequest?.status=='rejected'){
           console.log("innnnnnn existingConnecctionRequest")
         return  res.status(400).send({message:'Connection already exist'})
         }
         console.log("outtttt existingConnecctionRequest")
+        if(existingConnecctionRequest){
+          existingConnecctionRequest.status=status
+          const data=await existingConnecctionRequest.save()
+    console.log(".....dtate",data)
+   return res.json({
+        message:`${req.user.firstName }+ " is " + ${status} + " in " + ${toUserExist.firstName},`,
+        data
+    })
+        }
         
         const connectionRequest=new ConnectionRequest({
             fromUserId,
@@ -55,12 +65,12 @@ requestRoute.get('/sendConnectionRequest',userAuth,(req,res)=>{
             status
         })
         console.log("...connectionRequest",connectionRequest)
-    const data=await connectionRequest.save()
-    console.log(".....dtate",data)
-    res.json({
-        message:`${req.user.firstName }+ " is " + ${status} + " in " + ${toUserExist.firstName},`,
-        data
-    })
+        const data=await connectionRequest.save()
+        console.log(".....dtate",data)
+       return res.json({
+            message:`${req.user.firstName }+ " is " + ${status} + " in " + ${toUserExist.firstName},`,
+            data
+        })
 
     }catch(err){
         res.status(400).send("ERROR"+err.message)

@@ -9,7 +9,7 @@ userRouter.get('/user/requests/received',userAuth,async(req,res)=>{
      const connectionRequest=await ConnectionRequest.find({
         toUserId:loggedInUser,
         status:'intrested'
-     }).populate('fromUserId',['firstName','lastName'])
+     }).populate('fromUserId',['firstName','lastName','emailId','photoUrl'])
      res.json({
         message:"Data Fetched SuccessFully",
         data:connectionRequest
@@ -57,6 +57,7 @@ userRouter.get('/user/connection',userAuth,async(req,res)=>{
 
 userRouter.get('/feed',userAuth,async(req,res)=>{
     try{
+        console.log("in frrd")
        const loggedInUser=req.user 
        const page=parseInt(req.query.page)||1
        const limit=parseInt(req.query.limit)||10
@@ -80,7 +81,7 @@ userRouter.get('/feed',userAuth,async(req,res)=>{
             {_id:{$nin:Array.from(hideFromUserId)}},
             {_id:{$ne:loggedInUser._id}}
         ]
-    }).select("firstName lastName").skip(skip).limit(limit)
+    }).skip(skip).limit(limit)
      console.log("connectionRequest",connectionRequest)
      res.send({data:users})
 

@@ -12,8 +12,12 @@ authRouter.post('/signup',async(req,res)=>{
     const password=await bcrypt.hash(req.body.password,10)
     console.log("signupppp password..",password)
 const newModal=new userModal({...req.body,password})
-await newModal.save()
-res.send("User added")
+const data=await newModal.save()
+const token= await data.getJWT()
+res.cookie('token',token,{
+  expires:new Date(Date.now()+8*3600000)
+})
+res.send({message:"User added",data:data})
     }
 catch(err){
   console.log("error....",err,".sssssss....",err.Error)
@@ -26,15 +30,13 @@ authRouter.post("/login",async(req,res)=>{
  try{
   const {emailId,password}=req.body
   const user=await userModal.findOne({emailId:emailId})
-  console.log("user login",user)
+ 
   if(!user){
     throw new Error("Emailid is not present in db")
   }
   const isPassword=await bcrypt.compare(password,user.password)
-  console.log("....isPassword",isPassword)
   if(isPassword){
     const token= await user.getJWT()
-    console.log("Tokkkkkkk",token)
     res.cookie('token',token,{
       expires:new Date(Date.now()+8*3600000)
     })

@@ -2,6 +2,8 @@ const jwt=require('jsonwebtoken')
 const User=require('../models/user')
 const userAuth=async(req,res,next)=>{
     try{
+        console.log("in middleawsre")
+        
         const {token}=req.cookies
         console.log("tokennnnnnn middleware",token)
         if(!token){

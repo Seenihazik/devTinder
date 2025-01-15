@@ -8,14 +8,36 @@ const userModal=require('./models/user')
 const userRouter=require('./routes/user')
 const cookieparser=require('cookie-parser')
 const cors=require('cors')
-app.use(cors({
-  origin: 'http://localhost:5173', // Replace with your frontend's origin
-  credentials: true // This is crucial for credentials
-}));
-
+const corsOptions = {
+  origin: 'http://localhost:5173',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'], // Add allowed headers explicitly
+};
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)); // Enable CORS preflight requests for all routes
+app.use((req, res, next) => {
+  if (req.method === 'OPTIONS') {
+      res.header('Access-Control-Allow-Origin', 'http://localhost:5173');
+      res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE');
+      res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+      res.header('Access-Control-Allow-Credentials', 'true');
+      return res.status(200)
+  }
+  next();
+});
 app.use(express.json());
-app.use(cookieparser())
+app.use(cookieparser());
 
+
+
+
+
+
+app.use((req, res, next) => {
+  console.log(`[DEBUG] ${req.method} request to ${req.url} i app.js`);
+  next();
+});
 console.log('App started');
 app.use('/', authRouter);
 app.use('/', profileRouter);

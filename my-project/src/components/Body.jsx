@@ -14,10 +14,8 @@ const Body=()=>{
     const userData=useSelector((state)=>state.user)
     const fetchUser=async()=>{
         try{
-            console.log("in fetcg iser")
             if(userData) return
             const res=await axios.get(BASEURL + '/profile/view',{withCredentials:true})
-            console.log("in profileee",res.data)
              dispatch(addUser(res.data))       
         }catch(err){
             if(err.status==400){

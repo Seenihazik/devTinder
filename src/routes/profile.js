@@ -5,9 +5,9 @@ const {validateProfileData}=require('../utils/validation ')
 profileRouter.get('/profile/view',userAuth,(req,res)=>{
     const cookie=req.cookies
     console.log(cookie)
-    res.send(cookie)
+    res.send(req.user)
   })
-  profileRouter.patch('/profile/edit',userAuth,async (req,res)=>{
+  profileRouter.post('/profile/edit',userAuth,async (req,res)=>{
     try{
      if(! validateProfileData(req)){
       throw new Error("Invaluid edit request")
@@ -15,6 +15,8 @@ profileRouter.get('/profile/view',userAuth,(req,res)=>{
      console.log("re bodyyyyyyyyyyy",req.body,"........req.user",req.user)
      const loggerInUser=req.user
      Object.keys(req.body).forEach(e=>loggerInUser[e]=req.body[e])
+     loggerInUser.skills=req.body.skills
+     console.log("loggerInUser profi le ediyytyttt",loggerInUser)
      await loggerInUser.save()
      res.json({
       message:"profile edited SuccessFully",
